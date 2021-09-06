@@ -30,20 +30,22 @@ def send_mail():
         subject='Yoopi Stock Notifier',
         html_content='<strong>One of the products is in stock!!</strong>')
 
+    sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+    response = sg.send(message)
+    logging.info('Mail Response Status Code: ' + str(response.status_code))
+    logging.info('Mail Response Body: ' + str(response.body))
+    logging.info('Mail Response Headers: ' + str(response.headers))
+
+def test_mail_api_key():
     api_key = os.environ.get('SENDGRID_API_KEY')
     if not api_key:
         error_str = 'Missing API Key'
         logging.error(error_str)
         raise Exception(error_str)
 
-    sg = SendGridAPIClient(api_key)
-    response = sg.send(message)
-    logging.info('Mail Response Status Code: ' + str(response.status_code))
-    logging.info('Mail Response Body: ' + str(response.body))
-    logging.info('Mail Response Headers: ' + str(response.headers))
-
-
 if __name__ == '__main__':
+    test_mail_api_key()
+    
     while True:
         if is_in_stock(GREEN_BOX_LINK) or is_in_stock(BLUE_BOX_LINK):
             logging.info('Something is in stock!')
